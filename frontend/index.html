@@ -3,50 +3,247 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Welcome to BookStayPro</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>BookStayPro | Luxury Hotel Booking</title>
+
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: url('https://images.unsplash.com/photo-1501117716987-c8e29f8efb52?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
-      background-size: cover;
-      color: white;
-      font-family: 'Segoe UI', sans-serif;
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
     }
-    .overlay {
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 80px 30px;
-      text-align: center;
-      height: 100vh;
+
+    body{
+      font-family:'Segoe UI',sans-serif;
+      min-height:100vh;
+      background:
+      linear-gradient(rgba(0,0,0,0.72), rgba(0,0,0,0.75)),
+      url('https://images.unsplash.com/photo-1501117716987-c8e29f8efb52?auto=format&fit=crop&w=1600&q=80');
+
+      background-size:cover;
+      background-position:center;
+      color:white;
     }
-    h1 {
-      font-size: 60px;
-      margin-bottom: 20px;
+
+    /* NAVBAR */
+
+    .navbar{
+      width:100%;
+      padding:22px 70px;
+
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+
+      background:rgba(0,0,0,0.45);
+      backdrop-filter:blur(10px);
+
+      border-bottom:1px solid rgba(255,255,255,0.08);
     }
-    p {
-      font-size: 24px;
-      margin-bottom: 40px;
+
+    .logo{
+      font-size:34px;
+      font-weight:700;
+      color:#f4c542;
+      letter-spacing:1px;
     }
-    a {
-      text-decoration: none;
-      color: white;
-      background-color: #ff6600;
-      padding: 15px 30px;
-      border-radius: 8px;
-      font-size: 18px;
-      transition: background 0.3s ease;
+
+    .nav-links{
+      display:flex;
+      gap:18px;
     }
-    a:hover {
-      background-color: #cc5200;
+
+    .nav-links a{
+      text-decoration:none;
+      color:white;
+      padding:10px 18px;
+      border-radius:10px;
+      transition:0.3s;
+      font-weight:500;
     }
+
+    .nav-links a:hover{
+      background:#f4c542;
+      color:black;
+    }
+
+    /* HERO SECTION */
+
+    .hero{
+      height:85vh;
+
+      display:flex;
+      justify-content:center;
+      align-items:center;
+
+      padding:40px;
+    }
+
+    .hero-box{
+      width:100%;
+      max-width:850px;
+
+      background:rgba(15,15,15,0.72);
+
+      border:1px solid rgba(255,255,255,0.08);
+
+      border-radius:24px;
+
+      padding:60px;
+
+      text-align:center;
+
+      backdrop-filter:blur(12px);
+
+      box-shadow:
+      0 0 30px rgba(0,0,0,0.5);
+    }
+
+    .hero-box h1{
+      font-size:68px;
+      margin-bottom:20px;
+      color:white;
+      line-height:1.1;
+    }
+
+    .hero-box span{
+      color:#f4c542;
+    }
+
+    .hero-box p{
+      font-size:20px;
+      line-height:1.7;
+      color:#d7d7d7;
+
+      margin-bottom:40px;
+    }
+
+    /* BUTTONS */
+
+    .btn-group{
+      display:flex;
+      justify-content:center;
+      gap:20px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      text-decoration:none;
+
+      padding:15px 34px;
+
+      border-radius:14px;
+
+      font-size:17px;
+      font-weight:600;
+
+      transition:0.3s ease;
+
+      display:inline-block;
+    }
+
+    .primary-btn{
+      background:#f4c542;
+      color:black;
+    }
+
+    .primary-btn:hover{
+      background:#ffd95f;
+      transform:translateY(-3px);
+    }
+
+    .secondary-btn{
+      border:1px solid #f4c542;
+      color:#f4c542;
+    }
+
+    .secondary-btn:hover{
+      background:#f4c542;
+      color:black;
+      transform:translateY(-3px);
+    }
+
+    /* RESPONSIVE */
+
+    @media(max-width:768px){
+
+      .navbar{
+        padding:20px;
+      }
+
+      .logo{
+        font-size:26px;
+      }
+
+      .hero-box{
+        padding:35px;
+      }
+
+      .hero-box h1{
+        font-size:42px;
+      }
+
+      .hero-box p{
+        font-size:16px;
+      }
+
+      .btn{
+        width:100%;
+      }
+    }
+
   </style>
 </head>
+
 <body>
-  <div class="overlay">
-    <h1>BookStayPro</h1>
-    <p>Your Gateway to Luxurious Stays</p>
-    <a href="login.html">Login Now</a>
-  </div>
+
+  <!-- NAVBAR -->
+
+  <nav class="navbar">
+
+    <div class="logo">
+      BookStayPro
+    </div>
+
+    <div class="nav-links">
+      <a href="login.html">Login</a>
+      <a href="home.html">Hotels</a>
+      <a href="profile.html">Profile</a>
+    </div>
+
+  </nav>
+
+  <!-- HERO SECTION -->
+
+  <section class="hero">
+
+    <div class="hero-box">
+
+      <h1>
+        Discover <span>Luxury</span><br>
+        Hotels Worldwide
+      </h1>
+
+      <p>
+        Experience premium stays, elegant suites,
+        world-class hospitality, and unforgettable
+        travel moments with BookStayPro.
+      </p>
+
+      <div class="btn-group">
+
+        <a class="btn primary-btn" href="login.html">
+          Login Now
+        </a>
+
+        <a class="btn secondary-btn" href="home.html">
+          Explore Hotels
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
+
 </body>
 </html>

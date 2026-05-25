@@ -1,105 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Register Hotel | BookStayPro</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb') no-repeat center center fixed;
-      background-size: cover;
-      margin: 0;
-      color: white;
-    }
-
-    .form-container {
-      background-color: rgba(0, 0, 0, 0.7);
-      margin: 50px auto;
-      padding: 40px;
-      max-width: 600px;
-      border-radius: 15px;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      margin-top: 15px;
-    }
-
-    input, textarea {
-      width: 100%;
-      padding: 12px;
-      margin-top: 5px;
-      border: none;
-      border-radius: 8px;
-      background-color: #fff;
-      color: #000;
-    }
-
-    button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 14px;
-      background-color: #28a745;
-      color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #218838;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BookStayPro | Register Hotel</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
+  <header>
+    <h1>Register New Hotel</h1>
+
+    <div style="display:flex; gap:12px;">
+      <a class="book-btn" href="home.html">Hotels</a>
+      <a class="book-btn" href="admin.html">Admin</a>
+    </div>
+  </header>
+
   <div class="form-container">
     <h2>Hotel Registration</h2>
+
     <form id="hotelForm">
-      <label for="name">Hotel Name</label>
-      <input type="text" id="name" required>
+      <label>Hotel Name</label>
+      <input type="text" id="name" required />
 
-      <label for="address">Address</label>
-      <input type="text" id="address" required>
+      <label>Address</label>
+      <input type="text" id="address" required />
 
-      <label for="city">City</label>
-      <input type="text" id="city" required>
+      <label>City</label>
+      <input type="text" id="city" required />
 
-      <label for="description">Description</label>
+      <label>Description</label>
       <textarea id="description" rows="4" required></textarea>
 
-      <label for="image_url">Image URL</label>
-      <input type="url" id="image_url" required>
+      <label>Image URL</label>
+      <input type="url" id="image_url" required />
+
+      <label>Rating</label>
+      <input type="number" id="rating" step="0.1" min="1" max="5" required />
+
+      <label>Price Per Night</label>
+      <input type="number" id="price" required />
 
       <button type="submit">Register Hotel</button>
     </form>
+
+    <p id="response"></p>
   </div>
 
   <script>
-    document.getElementById('hotelForm').addEventListener('submit', async (e) => {
+    document.getElementById("hotelForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+
       const data = {
-        name: name.value,
-        address: address.value,
-        city: city.value,
-        description: description.value,
-        image_url: image_url.value
+        name: document.getElementById("name").value,
+        address: document.getElementById("address").value,
+        city: document.getElementById("city").value,
+        description: document.getElementById("description").value,
+        image_url: document.getElementById("image_url").value,
+        rating: document.getElementById("rating").value,
+        price: document.getElementById("price").value
       };
 
-      const res = await fetch('http://localhost:3000/api/hotels', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
+      try {
+        const res = await fetch("http://localhost:3000/api/hotels", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
 
-      const result = await res.json();
-      alert(result.message || 'Hotel registered!');
-      document.getElementById('hotelForm').reset();
+        const result = await res.json();
+
+        document.getElementById("response").textContent =
+          result.message || "Hotel registered successfully";
+
+        if (res.ok) {
+          document.getElementById("hotelForm").reset();
+        }
+
+      } catch (error) {
+        document.getElementById("response").textContent =
+          "Hotel registration failed";
+      }
     });
   </script>
 </body>

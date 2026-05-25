@@ -1,173 +1,198 @@
-<!-- profile.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BookStayPro - Profile</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
-      background-size: cover;
-      color: #333;
-    }
-
-    .overlay {
-      background-color: rgba(255, 255, 255, 0.95);
-      min-height: 100vh;
-      padding: 30px;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 2.5rem;
-      color: #00796b;
-    }
-
-    .filters {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-
-    select {
-      padding: 8px;
-      font-size: 1rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-
-    .booking-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-      padding: 20px;
-    }
-
-    .booking-card {
-      background: #fff;
-      border-radius: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      overflow: hidden;
-      transition: transform 0.3s ease;
-    }
-
-    .booking-card:hover {
-      transform: scale(1.03);
-    }
-
-    .booking-card img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-    }
-
-    .booking-details {
-      padding: 15px;
-    }
-
-    .booking-details h3 {
-      margin: 0;
-      font-size: 1.2rem;
-    }
-
-    .booking-details p {
-      margin: 5px 0;
-      font-size: 0.9rem;
-      color: #555;
-    }
-  </style>
+  <title>BookStayPro | My Bookings</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-  <div class="overlay">
-    <h1>Your Booking History</h1>
 
-    <div class="filters">
-      <select id="filterCity" onchange="applyFilters()">
-        <option value="">Filter by City</option>
-      </select>
-      <select id="filterRating" onchange="applyFilters()">
-        <option value="">Filter by Rating</option>
-        <option value="5">5 ★</option>
-        <option value="4">4+ ★</option>
-        <option value="3">3+ ★</option>
-      </select>
-    </div>
+  <header>
+    <h1>My Booking History</h1>
 
-    <div class="booking-container" id="bookingList">
-      <!-- Booking cards will go here -->
+    <div style="display:flex; gap:12px;">
+      <a class="book-btn" href="home.html">Explore Hotels</a>
+      <a class="book-btn" href="index.html">Logout</a>
     </div>
+  </header>
+
+  <div class="filters">
+
+    <select id="filterCity" onchange="applyFilters()">
+      <option value="">Filter by City</option>
+    </select>
+
+    <select id="filterStatus" onchange="applyFilters()">
+      <option value="">Filter by Status</option>
+      <option value="confirmed">Confirmed</option>
+      <option value="cancelled">Cancelled</option>
+    </select>
+
   </div>
+
+  <div class="booking-container" id="bookingList"></div>
 
   <script>
     let bookings = [];
 
     async function fetchBookings() {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3000/bookings', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      bookings = await res.json();
-      populateFilters();
-      renderBookings(bookings);
+      try {
+        const res = await fetch("http://localhost:3000/api/bookings");
+
+        bookings = await res.json();
+
+        populateFilters();
+
+        renderBookings(bookings);
+
+      } catch (error) {
+        console.error("Error fetching bookings:", error);
+      }
     }
 
     function populateFilters() {
-      const cities = [...new Set(bookings.map(b => b.hotel.city))];
-      const cityDropdown = document.getElementById('filterCity');
+      const cities =
+        [...new Set(bookings.map(b => b.city))];
+
+      const cityDropdown =
+        document.getElementById("filterCity");
+
       cities.forEach(city => {
-        const opt = document.createElement('option');
-        opt.value = city;
-        opt.innerText = city;
-        cityDropdown.appendChild(opt);
+        const option = document.createElement("option");
+
+        option.value = city;
+        option.innerText = city;
+
+        cityDropdown.appendChild(option);
       });
     }
 
     function renderBookings(data) {
-      const list = document.getElementById('bookingList');
+
+      const list =
+        document.getElementById("bookingList");
+
       if (data.length === 0) {
-        list.innerHTML = `<p>No bookings found for the selected filters.</p>`;
+        list.innerHTML = `
+          <p style="text-align:center;">
+            No bookings found.
+          </p>
+        `;
         return;
       }
 
-      list.innerHTML = data.map(b => `
+      list.innerHTML = data.map(booking => `
+
         <div class="booking-card">
-          <img src="${b.hotel.image_url}" alt="${b.hotel.name}">
+
           <div class="booking-details">
-            <h3>${b.hotel.name}</h3>
-            <p>City: ${b.hotel.city}</p>
-            <p>Rating: ${b.hotel.rating} ★</p>
-            <p>Booked From: ${b.check_in}</p>
-            <p>To: ${b.check_out}</p>
+
+            <h3>${booking.hotel_name}</h3>
+
+            <p>📍 ${booking.city}</p>
+
+            <p>👤 ${booking.user_name}</p>
+
+            <p>📧 ${booking.user_email}</p>
+
+            <p>💰 ₹${booking.price}</p>
+
+            <p>📅 ${booking.check_in}</p>
+
+            <p>📅 ${booking.check_out}</p>
+
+            <p>
+              Status:
+              <strong style="
+                color:
+                ${booking.status === 'confirmed'
+                  ? '#4ade80'
+                  : '#ff5c5c'};
+              ">
+                ${booking.status}
+              </strong>
+            </p>
+
+            ${
+              booking.status === "confirmed"
+              ?
+              `
+              <button
+                onclick="cancelBooking(${booking.id})"
+                style="margin-top:12px;"
+              >
+                Cancel Booking
+              </button>
+              `
+              :
+              ""
+            }
+
           </div>
+
         </div>
-      `).join('');
+
+      `).join("");
     }
 
     function applyFilters() {
-      const selectedCity = document.getElementById('filterCity').value;
-      const selectedRating = document.getElementById('filterRating').value;
+
+      const selectedCity =
+        document.getElementById("filterCity").value;
+
+      const selectedStatus =
+        document.getElementById("filterStatus").value;
 
       let filtered = [...bookings];
 
       if (selectedCity) {
-        filtered = filtered.filter(b => b.hotel.city === selectedCity);
+        filtered =
+          filtered.filter(
+            booking => booking.city === selectedCity
+          );
       }
 
-      if (selectedRating) {
-        filtered = filtered.filter(b => b.hotel.rating >= parseInt(selectedRating));
+      if (selectedStatus) {
+        filtered =
+          filtered.filter(
+            booking => booking.status === selectedStatus
+          );
       }
 
       renderBookings(filtered);
     }
 
+    async function cancelBooking(id) {
+
+      const confirmCancel =
+        confirm("Are you sure you want to cancel this booking?");
+
+      if (!confirmCancel) return;
+
+      try {
+
+        const res = await fetch(
+          `http://localhost:3000/api/bookings/${id}`,
+          {
+            method: "DELETE"
+          }
+        );
+
+        const data = await res.json();
+
+        alert(data.message);
+
+        fetchBookings();
+
+      } catch (error) {
+        console.error("Cancel booking error:", error);
+      }
+    }
+
     fetchBookings();
   </script>
+
 </body>
 </html>

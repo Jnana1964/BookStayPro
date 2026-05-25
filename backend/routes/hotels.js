@@ -1,31 +1,35 @@
-const express = require('express');
-const pool = require('../config/db');
-const { isAuthenticated, isAdmin } = require('../middleware');
+const express = require("express");
+const pool = require("../config/db");
 
 const router = express.Router();
 
 // Get all hotels
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const [rows] = await pool.execute('SELECT * FROM hotels');
+    const [rows] = await pool.execute("SELECT * FROM hotels");
     res.json(rows);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching hotels' });
+    console.error("Error fetching hotels:", error);
+    res.status(500).json({ message: "Error fetching hotels" });
   }
 });
 
-// Add new hotel (admin only)
-router.post('/', isAuthenticated, isAdmin, async (req, res) => {
-  const { name, location, pricePerNight, imageUrl } = req.body;
+// Add new hotel
+router.post("/", async (req, res) => {
+  const { name, address, city, image_url, description, rating, price } = req.body;
 
   try {
-    const [rows] = await pool.execute(
-      'INSERT INTO hotels (name, location, pricePerNight, imageUrl) VALUES (?, ?, ?, ?)', 
-      [name, location, pricePerNight, imageUrl]
+    await pool.execute(
+      `INSERT INTO hotels 
+      (name, address, city, image_url, description, rating, price) 
+      VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [name, address, city, image_url, description, rating, price]
     );
-    res.status(201).json({ message: 'Hotel added' });
+
+    res.status(201).json({ message: "Hotel added successfully" });
   } catch (error) {
-    res.status(500).json({ message: 'Error adding hotel' });
+    console.error("Error adding hotel:", error);
+    res.status(500).json({ message: "Error adding hotel" });
   }
 });
 
