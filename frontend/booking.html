@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BookStayPro - Book Hotels</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('https://images.unsplash.com/photo-1502920917128-1aa500764b4a?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+    }
+    .container {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      max-width: 1000px;
+      margin: auto;
+      margin-top: 40px;
+      border-radius: 12px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    form {
+      background-color: #fff;
+      padding: 20px;
+      color: #000;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Book Your Favorite Hotel</h1>
+
+    <form id="bookingForm">
+      <h2>Booking Details</h2>
+      <select id="hotelId" required></select>
+      <input type="text" id="userName" placeholder="Your Name" value="Keerthi" required />
+      <input type="email" id="userEmail" placeholder="Your Email" value="keerthi@gmail.com" required />
+      <input type="date" id="checkIn" required />
+      <input type="date" id="checkOut" required />
+      <button type="submit">Book Now</button>
+    </form>
+  </div>
+
+  <script>
+    async function fetchHotels() {
+      try {
+        const res = await fetch('http://localhost:3000/api/hotels');
+        const hotels = await res.json();
+        const hotelSelect = document.getElementById('hotelId');
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedHotelId = urlParams.get('hotelId');
+
+        hotels.forEach(hotel => {
+          const option = document.createElement('option');
+          option.value = hotel.id;
+          option.textContent = `${hotel.name} (${hotel.city}) - ₹${hotel.price}`;
+          if (hotel.id == selectedHotelId) option.selected = true;
+          hotelSelect.appendChild(option);
+        });
+      } catch (err) {
+        console.error("Failed to load hotels:", err);
+      }
+    }
+
+    document.getElementById('bookingForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const bookingData = {
+        hotelId: document.getElementById('hotelId').value,
+        name: document.getElementById('userName').value,
+        email: document.getElementById('userEmail').value,
+        checkIn: document.getElementById('checkIn').value,
+        checkOut: document.getElementById('checkOut').value
+      };
+
+      try {
+        const res = await fetch('http://localhost:3000/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bookingData)
+        });
+
+        if (res.ok) {
+          alert('✅ Booking Successful!');
+          window.location.href = 'home.html';
+        } else {
+          const errorData = await res.json();
+          alert('❌ Booking Failed: ' + (errorData.error || 'Unknown error'));
+          console.error("Booking failed:", errorData);
+        }
+      } catch (error) {
+        alert('❌ Booking Failed: Network Error');
+        console.error("Network error:", error);
+      }
+    });
+
+    fetchHotels();
+  </script>
+</body>
+</html>

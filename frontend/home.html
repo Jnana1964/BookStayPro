@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BookStayPro - Home</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://images.unsplash.com/photo-1501117716987-c8e1ecb21050?auto=format&fit=crop&w=1600&q=80') no-repeat center center/cover;
+      padding: 30px;
+    }
+    h1 {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 30px;
+    }
+    .filters {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    input, select {
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 15px;
+    }
+    .hotels-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+    }
+    .hotel-card {
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s;
+    }
+    .hotel-card:hover {
+      transform: scale(1.02);
+    }
+    .hotel-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    .hotel-details p {
+      margin: 8px 0;
+      font-size: 15px;
+      color: #333;
+    }
+    .book-btn {
+      display: inline-block;
+      padding: 10px 16px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+    }
+    .book-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Explore Hotels - BookStayPro</h1>
+
+  <div class="filters">
+    <input type="text" id="searchInput" placeholder="Search hotels by name..." oninput="applyFilters()" />
+    <select id="cityFilter" onchange="applyFilters()">
+      <option value="">All Cities</option>
+    </select>
+    <select id="sortFilter" onchange="applyFilters()">
+      <option value="">Sort by Price</option>
+      <option value="asc">Low to High</option>
+      <option value="desc">High to Low</option>
+    </select>
+  </div>
+
+  <div class="hotels-container" id="hotelsContainer"></div>
+
+  <script>
+    let hotels = [];
+
+    async function fetchHotels() {
+      try {
+        const res = await fetch('http://localhost:3000/api/hotels');
+        hotels = await res.json();
+        populateCityFilter();
+        applyFilters();
+      } catch (err) {
+        console.error('Error fetching hotels:', err);
+      }
+    }
+
+    function populateCityFilter() {
+      const cities = [...new Set(hotels.map(h => h.city))];
+      const citySelect = document.getElementById('cityFilter');
+      citySelect.innerHTML = '<option value="">All Cities</option>';
+      cities.forEach(city => {
+        const option = document.createElement('option');
+        option.value = city;
+        option.textContent = city;
+        citySelect.appendChild(option);
+      });
+    }
+
+    function applyFilters() {
+      const searchValue = document.getElementById('searchInput').value.toLowerCase();
+      const cityValue = document.getElementById('cityFilter').value;
+      const sortValue = document.getElementById('sortFilter').value;
+
+      let filtered = hotels.filter(h => 
+        h.name.toLowerCase().includes(searchValue) &&
+        (cityValue === '' || h.city === cityValue)
+      );
+
+      if (sortValue === 'asc') filtered.sort((a, b) => a.price - b.price);
+      if (sortValue === 'desc') filtered.sort((a, b) => b.price - a.price);
+
+      displayHotels(filtered);
+    }
+
+    function displayHotels(data) {
+      const container = document.getElementById('hotelsContainer');
+      container.innerHTML = '';
+      data.forEach(hotel => {
+        const card = document.createElement('div');
+        card.className = 'hotel-card';
+        card.innerHTML = `
+          <img src="${hotel.image_url}" alt="${hotel.name}" />
+          <div class="hotel-details">
+            <p><strong>${hotel.name}</strong></p>
+            <p>City: ${hotel.city}</p>
+            <p>Price: ₹${hotel.price}</p>
+            <a class="book-btn" href="booking.html?hotelId=${hotel.id}">Book Now</a>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    fetchHotels();
+  </script>
+</body>
+</html>

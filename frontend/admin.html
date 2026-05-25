@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard | BookStayPro</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+    }
+
+    .container {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 40px;
+      margin: 30px auto;
+      max-width: 1000px;
+      border-radius: 15px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 40px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ccc;
+    }
+
+    th {
+      background-color: #333;
+    }
+
+    td {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Admin Dashboard</h1>
+
+    <h2>All Users</h2>
+    <table id="usersTable">
+      <thead>
+        <tr>
+          <th>ID</th><th>Name</th><th>Email</th><th>Admin</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <h2>All Hotels</h2>
+    <table id="hotelsTable">
+      <thead>
+        <tr>
+          <th>ID</th><th>Name</th><th>City</th><th>Rating</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <h2>All Bookings</h2>
+    <table id="bookingsTable">
+      <thead>
+        <tr>
+          <th>ID</th><th>User ID</th><th>Hotel ID</th><th>Check-In</th><th>Check-Out</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    // Fetch and populate all data
+    window.onload = async () => {
+      const endpoints = ['users', 'hotels', 'bookings'];
+      for (const endpoint of endpoints) {
+        const res = await fetch(`http://localhost:3000/api/${endpoint}`);
+        const data = await res.json();
+        const tbody = document.querySelector(`#${endpoint}Table tbody`);
+        data.forEach(row => {
+          const tr = document.createElement('tr');
+          Object.values(row).forEach(val => {
+            const td = document.createElement('td');
+            td.textContent = val;
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+      }
+    };
+  </script>
+</body>
+</html>
